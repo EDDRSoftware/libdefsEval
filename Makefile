@@ -24,11 +24,12 @@
 #
 # Changes:
 # 2017-05-05: First & Last Name: What you did. 
+# 2017-05-31: Kevin Nesmith: Fixed a typo.
 #
 
 default: build
 
-TARGET     = ./libdefeval
+TARGET     = ./libdefseval
 CXX        = g++
 CXX_FILES  = main.cpp
 BOOST_ROOT = /usr/local/boost_1_64_0

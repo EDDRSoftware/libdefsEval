@@ -39,9 +39,9 @@ Once you have updated the BOOST_ROOT path in the Makefile, you should be able to
 
 ```sh
 $ make
-g++ -o ./libdefeval main.cpp -I/usr/local/boost_1_64_0 -I/usr/local/boost_1_64_0/boost -L/usr/local/boost_1_64_0/stage/lib -lboost_program_options -lboost_filesystem -lboost_system
-$ ls libdefeval
-libdefeval
+g++ -o ./libdefseval main.cpp -I/usr/local/boost_1_64_0 -I/usr/local/boost_1_64_0/boost -L/usr/local/boost_1_64_0/stage/lib -lboost_program_options -lboost_filesystem -lboost_system
+$ ls libdefseval
+libdefseval
 ```
 
 Congratulations!  You have successfully built the application.
@@ -50,7 +50,7 @@ To run a test on the testData directory, just run...
 
 ```sh
 $ make test2
-LD_LIBRARY_PATH=/usr/local/boost_1_64_0/stage/lib ./libdefeval --def ./testData/lib.defs --libs --cells --views
+LD_LIBRARY_PATH=/usr/local/boost_1_64_0/stage/lib ./libdefseval --def ./testData/lib.defs --libs --cells --views
 def: ./testData/lib.defs
 DEFINE: /home/username/Development/libdefsEval_orig/testData/lib.defs:2 "DEFINE my_lib $PWD/testData/library"
 libPath: /home/username/Development/libdefsEval_orig/testData/library
