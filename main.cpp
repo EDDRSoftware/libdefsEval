@@ -287,7 +287,8 @@ int main(int argc, char *argv[])
      "Show cell/views as single line items in the output.")
     ("defines",                         "Show DEFINE statements in the output.")
     ("includes",                        "Show INCLUDE statements in the output.")
-    ("comments",                        "Show comments in the output.");
+    ("comments",                        "Show comments in the output.")
+    ("version,v",                       "Show version information.");
 
     variables_map vm;
     store(parse_command_line(argc, argv, desc), vm);
@@ -295,6 +296,11 @@ int main(int argc, char *argv[])
 
     if(vm.count("help")) {
         cout << desc << endl;
+        return 0;
+    }
+
+    if(vm.count("version")){
+        cout << "libdefsEval version 0.1.0" << endl;
         return 0;
     }
 

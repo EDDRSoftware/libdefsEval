@@ -32,13 +32,15 @@ default: build
 TARGET     = ./libdefseval
 CXX        = g++
 CXX_FILES  = main.cpp
-BOOST_ROOT = /home/lib/boost_1_62_0
+BOOST_ROOT = /usr/local/boost_1_64_0
 BOOST_LIB  = $(BOOST_ROOT)/stage/lib
 BOOST_INC  = $(BOOST_ROOT)/boost
 
 build:
 	$(CXX) -o $(TARGET) $(CXX_FILES) -I$(BOOST_ROOT) -I$(BOOST_INC) -L$(BOOST_LIB) -lboost_program_options -lboost_filesystem -lboost_system
 
+version:
+	LD_LIBRARY_PATH=$(BOOST_LIB) $(TARGET) -v
 
 test:
 	LD_LIBRARY_PATH=$(BOOST_LIB) $(TARGET) --help
