@@ -32,7 +32,7 @@ default: build
 TARGET     = ./libdefseval
 CXX        = g++
 CXX_FILES  = main.cpp
-BOOST_ROOT = /usr/local/boost_1_64_0
+BOOST_ROOT = /home/lib/boost_1_62_0
 BOOST_LIB  = $(BOOST_ROOT)/stage/lib
 BOOST_INC  = $(BOOST_ROOT)/boost
 

@@ -242,7 +242,8 @@ void evaluate(const variables_map &vm, const string &libdefs)
                         readUntilEOF(&stream, &var2);
 
                         if(var1[0]=='#' || var2[0]=='#') {
-                            cerr << "INVALID LINE: " << fp.string() << ":" << lineNum << " => " << line << endl;
+                            cerr << "INVALID LINE: " << fp.string() << ":" << lineNum << " => " << line <<
+                                endl;
                             continue;
                         }
 
@@ -254,7 +255,8 @@ void evaluate(const variables_map &vm, const string &libdefs)
                         readUntilEOF(&stream, &var1);
 
                         if(var1[0]=='#') {
-                            cerr << "INVALID LINE: " << fp.string() << ":" << lineNum << " => " << line << endl;
+                            cerr << "INVALID LINE: " << fp.string() << ":" << lineNum << " => " << line <<
+                                endl;
                             continue;
                         }
 
