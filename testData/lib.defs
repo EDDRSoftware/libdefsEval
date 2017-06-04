@@ -1,5 +1,6 @@
 #This is a comment.
 DEFINE my_lib $PWD/testData/library
+
 INCLUDE ./lib.defs
 DEFINE test #This line is treated as an error to help debug.
 DEFINE missing_lib $PWD/testData/here

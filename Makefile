@@ -55,7 +55,7 @@ test3:
 	LD_LIBRARY_PATH=$(BOOST_LIB) $(TARGET) --def ./testData/lib.defs --libs --cellviews
 
 test4:
-	LD_LIBRARY_PATH=$(BOOST_LIB) $(TARGET) --def ./testData/lib.defs --libs --cells --views --comments
+	LD_LIBRARY_PATH=$(BOOST_LIB) $(TARGET) --def ./testData/lib.defs --libs --cells --views --comments --emptylines
 
 test5:
 	LD_LIBRARY_PATH=$(BOOST_LIB) $(TARGET) --def ./testData/lib.defs --libs --cellviews --comments

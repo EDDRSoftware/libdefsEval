@@ -180,8 +180,9 @@ void evaluateInclude(const variables_map &vm, const string &var1,
 
             evaluate(vm, includePath.string());
         } else {
-            cerr << "ERROR: Recursion in file => " << fp << " includes file => " <<
-                 includePath << " which references itself." << endl;
+            cerr << "ERROR: Recursion in file => " << fp <<
+                 " includes file => " << includePath <<
+                 " which references itself." << endl;
         }
     }
 }
@@ -205,7 +206,8 @@ void readUntilEOF(stringstream *stream, string *outVar)
 
 void evaluate(const variables_map &vm, const string &libdefs)
 {
-    bool showComments = vm.count("comments");
+    bool showComments   = vm.count("comments");
+    bool showEmptyLines = vm.count("emptylines");
     path fp;
 
     try {
@@ -221,6 +223,11 @@ void evaluate(const variables_map &vm, const string &libdefs)
                     getline(libdefsFile, line);
 
                     if(line.length()==0) {
+                        if(showEmptyLines) {
+                            cout << "EMPTY LINE: " << fp.string() << ":" <<
+                                 lineNum << endl;
+                        }
+
                         continue;
                     }
 
@@ -242,8 +249,8 @@ void evaluate(const variables_map &vm, const string &libdefs)
                         readUntilEOF(&stream, &var2);
 
                         if(var1[0]=='#' || var2[0]=='#') {
-                            cerr << "INVALID LINE: " << fp.string() << ":" << lineNum << " => " << line <<
-                                endl;
+                            cerr << "INVALID LINE: " << fp.string() << ":" <<
+                                 lineNum << " => " << line << endl;
                             continue;
                         }
 
@@ -255,8 +262,8 @@ void evaluate(const variables_map &vm, const string &libdefs)
                         readUntilEOF(&stream, &var1);
 
                         if(var1[0]=='#') {
-                            cerr << "INVALID LINE: " << fp.string() << ":" << lineNum << " => " << line <<
-                                endl;
+                            cerr << "INVALID LINE: " << fp.string() << ":" <<
+                                 lineNum << " => " << line << endl;
                             continue;
                         }
 
@@ -266,7 +273,8 @@ void evaluate(const variables_map &vm, const string &libdefs)
                     }
                 }
             } else {
-                cerr << "ERROR: Library path " << libdefs << " does not exist." << endl;
+                cerr << "ERROR: Library path " << libdefs <<
+                     " does not exist." << endl;
             }
         }
     } catch(...) {
@@ -278,8 +286,8 @@ int main(int argc, char *argv[])
 {
     options_description desc("Supported options.");
     desc.add_options()
-    ("help",                            "Show this help message.")
-    ("def" ,        value<string>(),    "Open this lib.defs file to parse.")
+    ("help,h",                          "Show this help message.")
+    ("def,d",       value<string>(),    "Open this lib.defs file to parse.")
     ("libs",                            "Show lib names in the output.")
     ("cells",                           "Show cell names in the output.")
     ("views",                           "Show view names in the output.")
@@ -287,7 +295,8 @@ int main(int argc, char *argv[])
      "Show cell/views as single line items in the output.")
     ("defines",                         "Show DEFINE statements in the output.")
     ("includes",                        "Show INCLUDE statements in the output.")
-    ("comments",                        "Show comments in the output.")
+    ("comments",                        "Show COMMENTS in the output.")
+    ("emptylines",                      "Show EMPTY LINES in the output.")
     ("version,v",                       "Show version information.");
 
     variables_map vm;
@@ -299,7 +308,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if(vm.count("version")){
+    if(vm.count("version")) {
         cout << "libdefsEval version 0.1.0" << endl;
         return 0;
     }
