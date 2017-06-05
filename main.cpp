@@ -91,6 +91,16 @@ bool parse(const string &varIn, const path &pathIn, path *pathOut,
 
     char **wp = par.we_wordv;
 
+    if(par.we_wordc==0){
+        if(lineNum==0) {
+            cerr << "INVALID FILE: " << varIn << endl;
+        } else {
+            cerr << "ERROR LINE: " << pathIn.string() << ":" << lineNum << " => " << line << endl;
+        }
+
+        retVal = false;
+    }
+
     for(size_t i = 0; i<par.we_wordc; ++i) {
         path current = pathIn;
 
@@ -102,7 +112,7 @@ bool parse(const string &varIn, const path &pathIn, path *pathOut,
             if(lineNum==0) {
                 cerr << "INVALID FILE: " << varIn << endl;
             } else {
-                cerr << "INVALID LINE: " << pathIn << ":" << lineNum << " => " << line << endl;
+                cerr << "INVALID LINE: " << pathIn.string() << ":" << lineNum << " => " << line << endl;
             }
 
             retVal = false;
@@ -155,6 +165,12 @@ void evaluateDefine(const variables_map &vm, const string &var1,
                 if(*it!=libPath) {
                     if(is_directory(it->path()) &&
                             it->path().parent_path()==libPath) {
+
+                        // Ignore hidden directories.
+                        if(it->path().filename().string()[0]=='.'){
+                            continue;
+                        }
+
                         if(showCells) {
                             cout << "\t\tcellName: " << it->path().filename().string() << endl;
                         }
