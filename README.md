@@ -57,7 +57,7 @@ libPath: /home/username/Development/libdefsEval_orig/testData/library
         libName: my_lib
                 cellName: cell1
                         viewName: layout
-                        viewName: schematic
+                        viewName: symbol
                 cellName: cell2
                 cellName: cell3
 ERROR: Recursion in file => "/home/username/Development/libdefsEval_orig/testData/lib.defs" includes file => "/home/username/Development/libdefsEval_orig/testData/lib.defs" which references itself.
@@ -69,7 +69,7 @@ libPath: /home/username/Development/libdefsEval_orig/testData/library
         libName: dir_link_lib
                 cellName: cell1
                         viewName: layout
-                        viewName: schematic
+                        viewName: symbol
                 cellName: cell2
                 cellName: cell3
 INVALID LINE: /home/username/Development/libdefsEval_orig/testData/lib.defs:7 => INCLUDE #This line is treaded as an error to help debug.
@@ -79,7 +79,7 @@ libPath: /home/username/Development/libdefsEval_orig/testData/library
         libName: test_lib
                 cellName: cell1
                         viewName: layout
-                        viewName: schematic
+                        viewName: symbol
                 cellName: cell2
                 cellName: cell3
 ERROR: Path "/home/username/Development/libdefsEval_orig/testData/./broken_link" contains a broken symlink.
