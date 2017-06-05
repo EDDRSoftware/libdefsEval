@@ -165,8 +165,7 @@ void evaluateDefine(const variables_map &vm, const string &var1,
                             for(; it2!=eod2; ++it2) {
                                 if(!is_directory(it2->path()) &&
                                         iCompareString(it2->path().extension().string(), string(".oa"))) {
-                                    string fileName = it2->path().filename().string();
-                                    string viewName = fileName.substr(0, fileName.size() - 3);
+                                    string viewName = it2->path().parent_path().filename().string();
 
                                     if(showCellViews) {
                                         cout << "\t\tcellViewName: " << it->path().filename().string() << "/" <<
