@@ -26,6 +26,9 @@
  * Changes:
  * 2017-01-01: First & Last Name: What you did.
  * 2017-05-31: Kevin Nesmith: Initial contribution.
+ * 2017-06-05: Kevin Nesmith: Fixed the reading of the last parameter on a line.
+ *                            There was an issue with multiple spaces.
+ *
  */
 
 #include <iostream>
@@ -103,11 +106,23 @@ bool parse(const string &varIn, const path &pathIn, path *pathOut,
             }
 
             retVal = false;
+            break;
         }
     }
 
     wordfree(&par);
     return retVal;
+}
+
+void readUntilEOL(stringstream *stream, string *outVar)
+{
+    string buffer;
+
+    getline(*stream, buffer);
+    // getline does not trim the beginning of line.  There is usually whitespace.
+    buffer.erase(buffer.begin(), find_if(buffer.begin(), buffer.end(),
+                                         not1(ptr_fun<int, int>(isspace))));
+    *outVar = buffer;
 }
 
 void evaluateDefine(const variables_map &vm, const string &var1,
@@ -187,23 +202,6 @@ void evaluateInclude(const variables_map &vm, const string &var1,
     }
 }
 
-void readUntilEOF(stringstream *stream, string *outVar)
-{
-    string buffer;
-    bool first = true;
-
-    // To get the entire file path that might contain spaces.
-    while(!stream->eof()) {
-        if(!first) {
-            (*outVar)+=" ";
-        }
-
-        (*stream) >> buffer;
-        (*outVar)+=buffer;
-        first = false;
-    }
-}
-
 void evaluate(const variables_map &vm, const string &libdefs)
 {
     bool showComments   = vm.count("comments");
@@ -246,7 +244,8 @@ void evaluate(const variables_map &vm, const string &libdefs)
                     if(action=="DEFINE") {
                         string var1, var2;
                         stream >> var1;
-                        readUntilEOF(&stream, &var2);
+                        // var2 requires reading until EOL;
+                        readUntilEOL(&stream, &var2);
 
                         if(var1[0]=='#' || var2[0]=='#') {
                             cerr << "INVALID LINE: " << fp.string() << ":" <<
@@ -259,7 +258,8 @@ void evaluate(const variables_map &vm, const string &libdefs)
                         }
                     } else if(action=="INCLUDE") {
                         string var1;
-                        readUntilEOF(&stream, &var1);
+                        // var1 requires reading until EOL
+                        readUntilEOL(&stream, &var1);
 
                         if(var1[0]=='#') {
                             cerr << "INVALID LINE: " << fp.string() << ":" <<
@@ -270,6 +270,9 @@ void evaluate(const variables_map &vm, const string &libdefs)
                         if(var1.length()>0) {
                             evaluateInclude(vm, var1, fp, line, lineNum);
                         }
+                    } else {
+                        cerr << "INVALID LINE: " << fp.string() << ":" <<
+                             lineNum << " => " << line << endl;
                     }
                 }
             } else {
