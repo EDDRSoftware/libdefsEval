@@ -132,12 +132,16 @@ void evaluateDefine(const variables_map &vm, const string &var1,
     bool showCells      = vm.count("cells");
     bool showViews      = vm.count("views");
     bool showCellViews  = vm.count("cellviews");
+    bool showDefines    = vm.count("defines");
     path libName(var1);
     path libPath;
 
     if(parse(var2, fp, &libPath, line, lineNum)) {
-        cout << "DEFINE: " << fp.string() << ":" << lineNum << " \"" << line << "\""
-             << endl;
+        if(showDefines) {
+            cout << "DEFINE: " << fp.string() << ":" << lineNum << " \"" << line << "\"" <<
+                 endl;
+        }
+
         cout << "libPath: " << libPath.string() << endl;
 
         if(showLibs) {
@@ -190,7 +194,8 @@ void evaluateInclude(const variables_map &vm, const string &var1,
     if(parse(var1, fp, &includePath, line, lineNum)) {
         if(fp!=includePath) {
             if(showIncludes) {
-                cout << "INCLUDE: " << includePath.string() << endl;
+                cout << "INCLUDE: " << fp.string() << ":" << lineNum << " " << includePath <<
+                     endl;
             }
 
             evaluate(vm, includePath.string());
@@ -204,6 +209,7 @@ void evaluateInclude(const variables_map &vm, const string &var1,
 
 void evaluate(const variables_map &vm, const string &libdefs)
 {
+    bool showAssigns    = vm.count("assigns");
     bool showComments   = vm.count("comments");
     bool showEmptyLines = vm.count("emptylines");
     path fp;
@@ -270,6 +276,11 @@ void evaluate(const variables_map &vm, const string &libdefs)
                         if(var1.length()>0) {
                             evaluateInclude(vm, var1, fp, line, lineNum);
                         }
+                    } else if(action=="ASSIGN") {
+                        if(showAssigns) {
+                            cout << "ASSIGN: " << fp.string() << ":" << lineNum << " \"" << line << "\"" <<
+                                 endl;
+                        }
                     } else {
                         cerr << "INVALID LINE: " << fp.string() << ":" <<
                              lineNum << " => " << line << endl;
@@ -298,6 +309,7 @@ int main(int argc, char *argv[])
      "Show cell/views as single line items in the output.")
     ("defines",                         "Show DEFINE statements in the output.")
     ("includes",                        "Show INCLUDE statements in the output.")
+    ("assigns",                         "Show ASSIGN statements in the output.")
     ("comments",                        "Show COMMENTS in the output.")
     ("emptylines",                      "Show EMPTY LINES in the output.")
     ("version,v",                       "Show version information.");

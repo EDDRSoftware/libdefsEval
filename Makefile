@@ -64,6 +64,10 @@ test6:
 	mkdir -p /tmp/here\ there/cell1
 	LD_LIBRARY_PATH=$(BOOST_LIB) $(TARGET) --def ./testData/lib.inc --libs --cells --views --comments
 
+test7:
+	mkdir -p /tmp/here\ there/cell1
+	LD_LIBRARY_PATH=$(BOOST_LIB) $(TARGET) --def ./testData/lib.inc --libs --cellviews --comments --assigns
+
 clean:
 	rm $(TARGET)
 
