@@ -28,6 +28,8 @@
  * 2017-05-31: Kevin Nesmith: Initial contribution.
  * 2017-06-05: Kevin Nesmith: Fixed the reading of the last parameter on a line.
  *                            There was an issue with multiple spaces.
+ * 2017-06-14: Dan Houlihan: Added check for INCLUDE recursion > 1 level
+ *                           Added check for comment at end of otherwise valid line
  *
  */
 
@@ -64,8 +66,11 @@ int fullPath(const char *pathIn, const path &base, path *outPath)
 {
     int retVal = 0;
 
+
     try {
+
         *outPath = canonical(pathIn, base);
+
     } catch(const filesystem_error &error) {
         if(is_symlink(error.path1())) {
             cerr << "ERROR: Path " << error.path1() << " contains a broken symlink." <<
@@ -104,11 +109,17 @@ bool parse(const string &varIn, const path &pathIn, path *pathOut,
     for(size_t i = 0; i<par.we_wordc; ++i) {
         path current = pathIn;
 
+        // check for comment at end of a line
+        if (*(wp[i]) == '#') {
+            break;
+        }
+
         if(!is_directory(current)) {
             current = pathIn.parent_path();
         }
 
         if(fullPath(wp[i], current, pathOut)) {
+
             if(lineNum==0) {
                 cerr << "INVALID FILE: " << varIn << endl;
             } else {
@@ -199,30 +210,52 @@ void evaluateDefine(const variables_map &vm, const string &var1,
     }
 }
 
-void evaluate(const variables_map &vm, const string &libdefs);
+
+bool
+isRecursiveInclude(const path &fp, std::vector<string> *pLibDefFiles)
+{
+    for (int i = 0; i < pLibDefFiles->size(); ++i)
+    {
+        if (fp.string().c_str() == (*pLibDefFiles)[i])
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+void evaluate(const variables_map &vm, const string &libdefs, std::vector<string> *pLibDefFiles);
 void evaluateInclude(const variables_map &vm, const string &var1,
-                     const path &fp, const string &line, int lineNum)
+                     const path &fp, const string &line, int lineNum,
+                     std::vector<string> *pLibDefFiles)
 {
     bool showIncludes = vm.count("includes");
     path includePath;
 
     if(parse(var1, fp, &includePath, line, lineNum)) {
-        if(fp!=includePath) {
+
+        // check for indirect recursion (grandparents)
+        if (! isRecursiveInclude(fp, pLibDefFiles)) {
+
             if(showIncludes) {
                 cout << "INCLUDE: " << fp.string() << ":" << lineNum << " " << includePath <<
                      endl;
             }
 
-            evaluate(vm, includePath.string());
+            pLibDefFiles->push_back(fp.string());
+            evaluate(vm, includePath.string(), pLibDefFiles);
+
         } else {
             cerr << "ERROR: Recursion in file => " << fp <<
                  " includes file => " << includePath <<
-                 " which references itself." << endl;
+                 " which directly or indirectly references itself." << endl;
         }
     }
 }
 
-void evaluate(const variables_map &vm, const string &libdefs)
+void evaluate(const variables_map &vm, const string &libdefs, std::vector<string> *pLibDefFiles)
 {
     bool showAssigns    = vm.count("assigns");
     bool showComments   = vm.count("comments");
@@ -289,7 +322,7 @@ void evaluate(const variables_map &vm, const string &libdefs)
                         }
 
                         if(var1.length()>0) {
-                            evaluateInclude(vm, var1, fp, line, lineNum);
+                            evaluateInclude(vm, var1, fp, line, lineNum, pLibDefFiles);
                         }
                     } else if(action=="ASSIGN") {
                         if(showAssigns) {
@@ -354,7 +387,9 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    evaluate(vm, libdefs);
+    std::vector<string> libDefFiles;
+
+    evaluate(vm, libdefs, &libDefFiles);
 
     return 0;
 }

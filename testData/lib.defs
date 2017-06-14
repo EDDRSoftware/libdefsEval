@@ -1,7 +1,6 @@
 #This is a comment.
 DEFINE my_lib $PWD/testData/library
 
-INCLUDE ./lib.defs
 DEFINE test #This line is treated as an error to help debug.
 DEFINE missing_lib $PWD/testData/here
 DEFINE dir_link_lib ./directory_link
@@ -9,3 +8,8 @@ INCLUDE #This line is treaded as an error to help debug.
 INCLUDE ./new_dir/file_link
 INCLUDE ./new_dir/symbol.inc
 DEFINE broken_lib ./broken_link
+
+DEFINE my_lib2 $PWD/testData/library  # check for comment at end of good line
+
+# INCLUDE recursion lib.defs->lib.defs2->lib.defs3->lib.defs
+INCLUDE ./lib.defs2  # another comment
